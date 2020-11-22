@@ -23,7 +23,7 @@ source5 = "testImg5.png"
 source6 = "testImg6.png"
 
 # image preprocessing
-img = cv2.imread(source6)
+img = cv2.imread(source4)
 dimensions = img.shape
 img = cv2.resize(img, (int(dimensions[1]/scale),int(dimensions[0]/scale)))
 greyImg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)

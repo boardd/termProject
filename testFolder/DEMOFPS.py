@@ -9,7 +9,7 @@ import cv2
 import mss
 import time
 
-vidDir = "video1.mov"
+vidDir = "resources/video2.mp4"
 
 fvs  = FileVideoStream(vidDir).start()
 time.sleep(1.0)
@@ -32,7 +32,4 @@ while fvs.more():
 	cv2.waitKey(1)
 	fps.update()
 
-fps.stop()
-print(fps.elapsed())
-print(fps.fps())
 fvs.stop()

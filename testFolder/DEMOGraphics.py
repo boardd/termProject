@@ -9,12 +9,9 @@ import mss
 import time
 
 def loadVideo(app):
-    vidDir = "video1.mov"
+    vidDir = "resources/video3.mov"
     app.fvs  = FileVideoStream(vidDir).start()
-    time.sleep(1)
-
-    
-
+    app.timerDelay = 1
 def appStarted(app):
     app.play = False
     app.counter = 0
