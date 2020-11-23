@@ -9,7 +9,7 @@ import cv2
 import mss
 import time
 
-vidDir = "resources/video2.mp4"
+vidDir = "resources/video3.mov"
 
 fvs  = FileVideoStream(vidDir).start()
 time.sleep(1.0)
@@ -21,7 +21,8 @@ while fvs.more():
 	# it, and convert it to grayscale (while still retaining 3
 	# channels)
 	frame = fvs.read()
-	frame = imutils.resize(frame, width=720)
+	frame = cv2.resize(frame, (720, 480))
+	#frame = imutils.resize(frame, width=720)
 	# frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 	# frame = np.dstack([frame, frame, frame])
 	# display the size of the queue on the frame
