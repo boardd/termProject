@@ -29,8 +29,7 @@ def initConstants(app):
 
 def processFiles(app):
     app.img = cv2.imread("resources/testImg7.png")
-    vidDir = "resources/video3.mov"
-    app.fvs = FileVideoStream(vidDir)
+    app.vidDir = "resources/video3.mov"
     dimensions = app.img.shape
     app.img = cv2.resize(app.img, (int(dimensions[1]/app.scale), int(dimensions[0]/app.scale)))
     app.hsvImg = cv2.cvtColor(app.img, cv2.COLOR_BGR2HSV)
@@ -56,11 +55,17 @@ def processFiles(app):
 def appStarted(app):
     initConstants(app)
     processFiles(app)
-    app.show = True
+    app.show = False
+    app.screenCap = False
+    app.showVideo = False
 
 def keyPressed(app,event):
     if event.key == "s":
         app.show = not app.show
+    elif event.key == "c":
+        app.screenCap = not app.screenCap
+    elif event.key == "v":
+        app.showVideo = not app.showVideo
 
 def getRectangle(app):
     areaThresh = 10000 # threshold for the speaker rectangle
@@ -76,6 +81,20 @@ def getRectangle(app):
             cv2.circle(app.resultImg, (x1,y1), 4, app.blue, -1) # (x,y), radius, color, thickness (-1 means fill)
             cv2.circle(app.resultImg, (x2,y2), 4, app.blue, -1)
 
+def showVideo(app):
+    fvs  = FileVideoStream(app.vidDir).start()
+    time.sleep(1.0)
+    while fvs.more():
+        frame = fvs.read()
+        frame = cv2.resize(frame, (720, 480))
+        cv2.imshow("Frame", frame)
+        cv2.waitKey(1)
+
+def screenCap(app):
+    with mss.mss() as sct:
+        img = np.array(sct.grab(sct.monitors[2]))
+        cv2.imshow("image", img)
+    
 def getFaces(app):
     faces = app.faceCascade.detectMultiScale(app.greyImg, scaleFactor=1.1, minNeighbors=3)
     for rec in faces:
@@ -103,9 +122,16 @@ def timerFired(app):
         getFaces(app)
         getRectangle(app)
         cv2.imshow("img", app.resultImg)
+        cv2.waitKey(1)
+    if app.screenCap:
+        screenCap(app)
+    if app.showVideo:
+        showVideo(app)
 
 def redrawAll(app, canvas):
-    canvas.create_text(app.width/2, 10, text ="Press S to show")
+    canvas.create_text(app.width/2, 200, text ="Press S to show")
+    canvas.create_text(app.width/2, 220, text = "Press C to screencap")
+    canvas.create_text(app.width/2, 240, text= "Press V to show Video")
 
 
 runApp(width = 720, height = 480) 

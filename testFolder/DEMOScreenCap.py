@@ -1,4 +1,5 @@
 import mss
+import pyautogui
 import cv2
 import numpy as np
 import time
@@ -10,3 +11,12 @@ with mss.mss() as sct:
         if cv2.waitKey(25) & 0xFF == ord("q"):
             cv2.destroyAllWindows()
             break
+
+
+# while True:
+#     img = pyautogui.screenshot()
+#     img = np.array(img)
+#     cv2.imshow("image", img)
+#     if cv2.waitKey(25) & 0xFF == ord("q"):
+#         cv2.destroyAllWindows()
+#         break
