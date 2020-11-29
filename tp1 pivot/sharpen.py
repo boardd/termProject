@@ -27,7 +27,8 @@ def medianFilter(img, kernelSize):
                 temp[i][row][col] = round(value)
     fullImage = np.dstack(temp).astype(np.uint8)
     return fullImage
-
+    
+# somethings wrong with laplacian filter
 def sharpen(img, selected, scale = 0.15):
     ogImg = img
     # img = medianFilter(img,3)
