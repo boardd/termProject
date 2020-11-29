@@ -2,13 +2,15 @@ import cv2
 import numpy as np
 import math
 
-img = cv2.imread("resources/img2.jpg")
+# img = cv2.imread("resources/img2.jpg")
 
 def gaussianModel(x,y,variance):
     return (1/(2*math.pi*(variance**2)))*math.exp((-(x**2 + y**2))/(2*(variance**2)))
 
 def blur(img, kernelSize, isGaussian = False, variance = 1):
     kernel = np.ones((kernelSize, kernelSize), np.float32)
+    if len(img.shape) != 3: grey = True
+    else: grey = False
     if isGaussian:
         total = 0
         for row in range(kernelSize):
@@ -22,11 +24,15 @@ def blur(img, kernelSize, isGaussian = False, variance = 1):
                 kernel[row][col] /= total
     kernelOffset = kernelSize // 2
     directions = sorted([i * -1 for i in range(kernelSize // 2 + 1)] + [i for i in range(1,kernelSize//2 + 1)])
-    redChannel = np.array(img[:,:,2])
-    greenChannel = np.array(img[:,:,1])
-    blueChannel = np.array(img[:,:,0])
-    allChannels = (blueChannel, greenChannel, redChannel)
-    temp = (np.zeros(allChannels[0].shape), np.zeros(allChannels[0].shape),np.zeros(allChannels[0].shape))
+    if not grey:
+        redChannel = np.array(img[:,:,2])
+        greenChannel = np.array(img[:,:,1])
+        blueChannel = np.array(img[:,:,0])
+        allChannels = (blueChannel, greenChannel, redChannel)
+        temp = (np.zeros(allChannels[0].shape), np.zeros(allChannels[0].shape),np.zeros(allChannels[0].shape))
+    else:
+        allChannels = [img]
+        temp = np.zeros(img.shape)
     for i, channel in enumerate(allChannels):
         for row in range(channel.shape[0]):
             for col in range(channel.shape[1]):
@@ -45,11 +51,16 @@ def blur(img, kernelSize, isGaussian = False, variance = 1):
                     value = result / count
                 else:
                     value = result
-                temp[i][row][col] = round(value)
-    fullImage = np.dstack(temp).astype(np.uint8)
-    return fullImage
+                if not grey:
+                    temp[i][row][col] = round(value) 
+                else:
+                    temp[row][col] = round(value)   
+    if not grey:
+        fullImage = np.dstack(temp).astype(np.uint8)
+        return fullImage
+    return temp
 
-output = blur(img, 3, True, 1)
-cv2.imshow("yay", output)
-cv2.waitKey(0)
+# output = blur(img, 3, True, 1)
+# cv2.imshow("yay", output)
+# cv2.waitKey(0)
 
