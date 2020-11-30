@@ -1,7 +1,8 @@
+from cmu_112_graphics import *
+import os
 import cv2
 import numpy as np
 import math
-
 # img = cv2.imread("resources/img2.jpg")
 
 def gaussianModel(x,y,variance):

@@ -5,6 +5,7 @@ from sharpen import *
 from interface import *
 import os
 import cv2
+import math
 import numpy as np
 
 class button:
@@ -43,9 +44,9 @@ class button:
         if self.num == 0:
             return blur(img, 3, True, 1)
         elif self.num == 1:
-            pass
+            return edgeDetection(img, "laplacian")
         elif self.num == 2:
-            pass
+            return bilateral(img, 3, 50, 50)
         elif self.num == 3:
             pass
         elif self.num == 4:

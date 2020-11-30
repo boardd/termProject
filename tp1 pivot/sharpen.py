@@ -1,6 +1,8 @@
+from cmu_112_graphics import *
+import os
 import cv2
 import numpy as np
-
+import math
 from blurs import *
     
 def edgeDetection(img, selected, scale = 0.15):
@@ -62,9 +64,9 @@ def edgeDetection(img, selected, scale = 0.15):
         fullImage = np.dstack(temp)
     else:
         fullImage = temp
-    newFullImage = (fullImage * scale).astype(np.uint8)
-    resultImg = np.add(ogImg, newFullImage)
-    return fullImage, resultImg
+    # newFullImage = (fullImage * scale).astype(np.uint8)
+    # resultImg = np.add(ogImg, newFullImage)
+    return fullImage
 
 def unSharpen(img, scale = 0.1):
     ogImg = img

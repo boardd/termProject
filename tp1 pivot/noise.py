@@ -1,14 +1,14 @@
-#bilateral filter
+from cmu_112_graphics import *
+import os
 import cv2
+import math
 import numpy as np
-from blurs import *
-
 # img = cv2.imread("resources/img6.jpg")
 
 def gaussianModel(dist,variance):
     return (1/(2*math.pi*(variance**2)))*math.exp((-(dist**2))/(2*(variance**2)))
 
-def bilateral(img, kernelSize = 3, sigS = 1, sigR = 1):
+def bilateral(img, kernelSize = 3, sigS = 50, sigR = 50):
     kernel = np.ones((kernelSize, kernelSize), np.float32)
     if len(img.shape) != 3:
         grey = True

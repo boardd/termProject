@@ -1,12 +1,13 @@
-
 from cmu_112_graphics import *
+from blurs import *
+from noise import *
+from sharpen import *
+from interface import *
 from button import *
-from tkinter import filedialog
-from tkinter import *
-from PIL import Image, ImageTk
-import numpy as np
 import os
 import cv2
+import math
+import numpy as np
 
 
 def initUI(app):
@@ -29,7 +30,7 @@ def openFileDialog(app):
     app.loadedImg = Image.open(dialog)
     # app.loadedImg = Image.open("resources/img2.jpg")
     app.imgArray = np.array(app.loadedImg)
-    app.scaled = False
+    app.scale = None
     scaleImg(app)
     app.loaded = True
 
@@ -53,8 +54,8 @@ def drawImage(app, canvas):
     if app.loaded:
         r = 5
         canvas.create_image((app.width/2 )+ 100,app.height/2 , image = ImageTk.PhotoImage(app.imgShow))
-        canvas.create_oval((app.width/2 + 100) - r, (app.height/2) - r,
-                            (app.width/2 + 100) + r, (app.height/2) + r, fill = "red")
+        # canvas.create_oval((app.width/2 + 100) - r, (app.height/2) - r,
+        #                     (app.width/2 + 100) + r, (app.height/2) + r, fill = "red")
 
 def drawUI(app, canvas):
     # draw background
