@@ -2,10 +2,7 @@ import cv2
 import numpy as np
 
 from blurs import *
-
-img = cv2.imread("resources/img4.jpg")
     
-# somethings wrong with laplacian filter
 def edgeDetection(img, selected, scale = 0.15):
     ogImg = img
     if len(img.shape) != 3: grey = True
@@ -69,7 +66,7 @@ def edgeDetection(img, selected, scale = 0.15):
     resultImg = np.add(ogImg, newFullImage)
     return fullImage, resultImg
 
-def sharpen2(img, scale = 0.1):
+def unSharpen(img, scale = 0.1):
     ogImg = img
     img = blur(img, 5, True, 1)
     img = cv2.bitwise_not(img)
@@ -78,9 +75,9 @@ def sharpen2(img, scale = 0.1):
     return output
 
 # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-output  = sharpen2(img, 0.1)
-cv2.imshow("source", img)
-cv2.imshow("output", output)
+# output  = sharpen2(img, 0.1)
+# cv2.imshow("source", img)
+# cv2.imshow("output", output)
 # output1, newoutput1 = sharpen(img, "laplacian", 0.15)
 # # img = medianFilter(img, 3)
 # output2 = cv2.filter2D(img, -1, np.array([[ 0, 0,-1, 0, 0],
@@ -94,4 +91,4 @@ cv2.imshow("output", output)
 # cv2.imshow("my filtered", output1)
 # cv2.imshow("reference filtered", output2)
 # cv2.imshow("reference", newoutput2)
-cv2.waitKey(0)
+# cv2.waitKey(0)

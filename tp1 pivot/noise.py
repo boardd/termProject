@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 from blurs import *
 
-img = cv2.imread("resources/img6.jpg")
+# img = cv2.imread("resources/img6.jpg")
 
 def gaussianModel(dist,variance):
     return (1/(2*math.pi*(variance**2)))*math.exp((-(dist**2))/(2*(variance**2)))
@@ -55,11 +55,11 @@ def bilateral(img, kernelSize = 3, sigS = 1, sigR = 1):
         return fullImage
     return temp.astype(np.uint8)
 
-# img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-output1 = bilateral(img, 3, 50, 25)
-print(output1 == img)
-# output2 = blur(img, 3, True, 1)
-cv2.imshow("output1", output1)
-# cv2.imshow("output2", output2)
-cv2.imshow("reference", img)
-cv2.waitKey(0)
+# # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+# output1 = bilateral(img, 3, 50, 25)
+# print(output1 == img)
+# # output2 = blur(img, 3, True, 1)
+# cv2.imshow("output1", output1)
+# # cv2.imshow("output2", output2)
+# cv2.imshow("reference", img)
+# cv2.waitKey(0)
