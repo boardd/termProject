@@ -27,7 +27,7 @@ blur out selected regions
 # https://computersciencesource.wordpress.com/2010/09/03/computer-vision-the-integral-image/
 # https://users.itk.ppke.hu/kep/Lectures/IPA_02_Convolution.pdf
 # https://www.youtube.com/watch?v=rFWnRT2iqKg
-
+# http://people.csail.mit.edu/sparis/siggraph07_course/course_notes.pdf
 
 
 
