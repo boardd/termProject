@@ -1,10 +1,20 @@
+from cmu_112_graphics import *
+from blurs import *
+from noise import *
+from sharpen import *
+from interface import *
+import os
+import cv2
+import numpy as np
+
 class button:
-    def __init__(self, x, y, w, h, text = ""):
+    def __init__(self, x, y, w, h, text = "", number = None):
         self.x = x
         self.y = y
         self.w = w
         self.h = h
         self.text = text
+        self.num = number
         self.color = "#CDCDCD"
     
     def changeColor(self, color):
@@ -27,3 +37,22 @@ class button:
             (self.y < y < self.y + self.h)):
             return True
         return False
+    
+    def function(self, img):
+        print(self.text)
+        if self.num == 0:
+            return blur(img, 3, True, 1)
+        elif self.num == 1:
+            pass
+        elif self.num == 2:
+            pass
+        elif self.num == 3:
+            pass
+        elif self.num == 4:
+            pass
+        elif self.num == 5:
+            pass
+        elif self.num == 6:
+            pass
+        elif self.num == 7:
+            pass

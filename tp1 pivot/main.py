@@ -34,10 +34,16 @@ def mousePressed(app, event):
     mX, mY = event.x, event.y
     if app.uploadB.click(mX, mY):
         openFileDialog(app)
+    for b in app.buttons:
+        if b.click(mX, mY) and app.loaded:
+            app.imgArray = b.function(app.imgArray)
+            scaleImg(app)
 
 def mouseMoved(app, event):
     mX, mY = event.x, event.y
     app.uploadB.hover(mX,mY)
+    for b in app.buttons:
+        b.hover(mX, mY)
 
 def timerFired(app):
     updateImg(app)
