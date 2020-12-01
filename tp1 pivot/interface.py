@@ -27,12 +27,15 @@ def createButtons(app):
 def openFileDialog(app):
     dialog = filedialog.askopenfilename(initialdir = os.getcwd(), title="Choose Image", 
                                     filetypes = (("JPG", "*.jpg"), ("PNG", "*.png"), ("All Files", "*.*")))
-    app.loadedImg = Image.open(dialog)
-    # app.loadedImg = Image.open("resources/img2.jpg")
-    app.imgArray = np.array(app.loadedImg)
-    app.scale = None
-    scaleImg(app)
-    app.loaded = True
+    try:
+        app.loadedImg = Image.open(dialog)
+        # app.loadedImg = Image.open("resources/img2.jpg")
+        app.imgArray = np.array(app.loadedImg)
+        app.scale = None
+        scaleImg(app)
+        app.loaded = True
+    except:
+        pass
 
 def scaleImg(app):
     app.imgOldW, app.imgOldH = app.imgArray.shape[1], app.imgArray.shape[0]

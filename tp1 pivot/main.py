@@ -1,4 +1,5 @@
 '''
+(not) Photoshop / Aperture / Darkroom
 core functions:
 
 more complex

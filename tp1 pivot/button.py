@@ -46,7 +46,7 @@ class button:
         elif self.num == 1:
             return edgeDetection(img, "laplacian")
         elif self.num == 2:
-            return bilateral(img, 3, 50, 50)
+            return bilateral(img, 3, 20, 100)
         elif self.num == 3:
             pass
         elif self.num == 4:
