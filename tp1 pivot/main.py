@@ -1,62 +1,60 @@
-'''
-(not) Photoshop / Aperture / Darkroom
-core functions:
-
-more complex
-Gaussian Blur
-sharpening algorithms
-De-noising algorithms
-
-less complex
-Contrast Slider/adjuster
-Brightness Slider/adjuster
-Color channel/adjusters
-image cropping of selected area
-
-any additional functions:
-healing brush
-blur out faces
-blur out text
-blur out selected regions
-'''
 from cmu_112_graphics import *
 from blurs import *
 from noise import *
 from sharpen import *
 from interface import *
 from button import *
+from menu import *
 import os
 import cv2
 import math
 import numpy as np
 
 def appStarted(app):
+    app.started = False
     initUI(app)
+    app.timerDelay = 100
+    
 
 def mousePressed(app, event):
     mX, mY = event.x, event.y
     if app.uploadB.click(mX, mY):
         openFileDialog(app)
-    for b in app.buttons:
-        if b.click(mX, mY) and app.loaded:
-            app.imgArray = b.function(app.imgArray)
-            scaleImg(app)
+    if app.started:
+        if app.saveB.click(mX, mY):
+            print("saved")
+        if app.loaded:
+            for b in app.buttons:
+                b.menuClick(mX, mY)
+                # if b.click(mX, mY) and app.loaded:
+                #     app.imgArray = b.function(app.imgArray)
+                #     scaleImg(app)
 
 def mouseMoved(app, event):
     mX, mY = event.x, event.y
     app.uploadB.hover(mX,mY)
-    for b in app.buttons:
-        b.hover(mX, mY)
+    if app.started:
+        app.saveB.hover(mX, mY)
+        for b in app.buttons:
+            b.hover(mX, mY)
 
 def timerFired(app):
-    updateImg(app)
+    if app.started:
+        updateImg(app)
 
 def keyPressed(app, event):
-    pass
+    # skips the beginning screen
+    if event.key == "s":
+        app.started = True
+        app.loaded = True
+        app.uploadB.x = 20
+        app.uploadB.y = 20
+        app.uploadB.h = 40
 
 def redrawAll(app, canvas):
-    drawUI(app,canvas)
+    drawUIBase(app,canvas)
     drawImage(app, canvas)
+    drawUI(app, canvas)
 
 runApp(width = 1380, height = 720)
 

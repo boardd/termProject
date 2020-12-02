@@ -4,6 +4,7 @@ from noise import *
 from sharpen import *
 from interface import *
 from button import *
+from menu import *
 import os
 import cv2
 import math
@@ -11,18 +12,28 @@ import numpy as np
 
 
 def initUI(app):
-    app.uploadB = button(20,20,160,60,"Browse Images")
+    app.uploadB = button(app.width/2 - 80,app.height - 200,160,60,"Browse Images")
+    app.saveB = button(20, 80, 160, 40, "Save Image")
     app.loaded = False
     app.scale = None
-    app.uploadColor = "#CDCDCD"
+    app.darkGrey = "#212529"
+    app.medGrey = "#495057"
+    app.litGrey = "#ADB5BD"
+    app.veryLitGrey = "#CED4DA"
     app.buttons = []
     createButtons(app)
 
 def createButtons(app):
     text = ["BLUR", "SHARPEN", "DENOISE", "CROP", "FILTER", "COLOR", "CONTRAST", "BRIGHTNESS"]
-    x, y, w, h, gap = 20,100, 80, 30, 50
+    sampleDict = {"Type": ["Gaussian", "Median", "Average"], 
+                "Kernel": [None],
+                "Sigma": [None],
+                "Speed": ["Slow", "Fast"],
+                }
+    fields = [sampleDict]* 8
+    x, y, w, h, gap = 20, 140, 80, 30, 50
     for i in range(8):
-        app.buttons.append(button(x, y + (gap * i), w, h, text[i], i))
+        app.buttons.append(button(x, y + (gap * i), w, h, text[i], i, fields[i]))
 
 def openFileDialog(app):
     dialog = filedialog.askopenfilename(initialdir = os.getcwd(), title="Choose Image", 
@@ -34,6 +45,10 @@ def openFileDialog(app):
         app.scale = None
         scaleImg(app)
         app.loaded = True
+        app.started = True
+        app.uploadB.x = 20
+        app.uploadB.y = 20
+        app.uploadB.h = 40
     except:
         pass
 
@@ -60,11 +75,21 @@ def drawImage(app, canvas):
         # canvas.create_oval((app.width/2 + 100) - r, (app.height/2) - r,
         #                     (app.width/2 + 100) + r, (app.height/2) + r, fill = "red")
 
+def drawUIBase(app, canvas):
+    if app.started:
+        # draw background
+        canvas.create_rectangle(0,0, app.width, app.height, fill = app.darkGrey, outline = app.darkGrey)
+        canvas.create_rectangle(0,0, 200, app.height, fill = app.medGrey, outline = app.medGrey)
+
 def drawUI(app, canvas):
-    # draw background
-    canvas.create_rectangle(0,0, app.width, app.height, fill = "#CDCDCD", outline = "#CDCDCD")
-    canvas.create_rectangle(0,0, 200, app.height, fill = "#696969", outline = "#696969")
-    # draw buttons
-    app.uploadB.draw(canvas, "Arial 16 bold")
-    for b in app.buttons:
-        b.draw(canvas, "Arial 12 bold")
+    if app.started:
+        # draw buttons
+        app.uploadB.draw(canvas, "Arial 16 bold")
+        app.saveB.draw(canvas, "Arial 16 bold")
+
+        for b in app.buttons:
+            b.draw(canvas, "Arial 12 bold")
+    else:
+        canvas.create_rectangle(0,0, app.width, app.height, fill = app.darkGrey, outline = app.darkGrey)
+        canvas.create_text(app.width/2, 0 + 300,text = "Darkroom", font = "Arial 180 bold", fill = app.veryLitGrey )
+        app.uploadB.draw(canvas, "Arial 16 bold")

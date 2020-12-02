@@ -1,0 +1,25 @@
+(not) Photoshop / Aperture / Darkroom
+core functions:
+
+more complex
+Gaussian Blur
+sharpening algorithms
+De-noising algorithms
+
+less complex
+Contrast Slider/adjuster
+Brightness Slider/adjuster
+Color channel/adjusters
+image cropping of selected area
+
+any additional functions:
+healing brush
+blur out faces
+blur out text
+blur out selected regions
+
+MVP definition:
+1.) Image processing app that can load in images with a clean UI
+2.) Blurring, sharpen (not deblur), filtering, cropping
+3.) custom filter feature, cropping, adjust brightness, contrast
+4.) save the new image
