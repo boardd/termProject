@@ -84,7 +84,7 @@ def sharpen(img, selected = "sharpen", scale = 0.15):
     else: grey = False
     img = blur(img,3, True, 1)
     basic = np.array([[-0.5, -1.0, -0.5],
-                    [-1.0, 7.0, -1.0],
+                    [-1.0, 5.0, -1.0],
                     [-0.5, -1.0, -0.5]])
     if selected == "sharpen":
         kernel = basic
@@ -129,8 +129,35 @@ def sharpen(img, selected = "sharpen", scale = 0.15):
     resultImg = np.add(ogImg, newFullImage)
     return resultImg
 
-# img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-# output  = sharpen(img, "sharpen", 0.1)
+def fastSharpen(img, typ, scale = 0.05):
+    basic1 = np.array([[-0.5, -1.0, -0.5],
+                    [-1.0, 6.0, -1.0],
+                    [-0.5, -1.0, -0.5]])
+    laplacian = np.array([[ 0, 0,-1, 0, 0],
+                                [ 0,-1,-2,-1, 0],
+                                [-1,-2,16,-2,-1],
+                                [ 0,-1,-2,-1, 0],
+                                [ 0, 0,-1, 0, 0]])
+    basic2 = np.array([[-1,-1,-1],
+                            [-1,9,-1],
+                            [-1,-1,-1]])
+    doublePrime = np.array([[0,1,0],
+                            [1,-4,1],
+                            [0,1,0]])
+    if typ == "laplacian":
+        kernel = laplacian
+    elif typ == "basic1":
+        kernel = basic1
+    elif typ == "basic2":
+        kernel = basic2
+    elif typ == "doublePrime":
+        kernel = doublePrime
+    output = cv2.filter2D(img, -1, kernel)*scale
+    fullImage = np.add(img, output).astype(np.uint8)
+    return fullImage
+
+
+# output  = fastSharpen(img, "basic1", 0.1)
 # cv2.imshow("source", img)
 # cv2.imshow("output", output)
 # cv2.waitKey(0)

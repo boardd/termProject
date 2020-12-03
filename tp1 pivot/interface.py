@@ -30,7 +30,9 @@ def createButtons(app):
                 "Sigma": [None],
                 "Speed": ["Slow", "Fast"],
                 }
-    fields = [sampleDict]* 8
+    blurList = {"Type":[None], "Kernel":[None], "Sigma":[None], "Speed":[None]}
+    sharpenList = {"Type":[None], "Scale":[None]}
+    fields = [blurList] + [sharpenList] +  [sampleDict]* 6
     x, y, w, h, gap = 20, 140, 80, 30, 50
     for i in range(8):
         app.buttons.append(button(x, y + (gap * i), w, h, text[i], i, fields[i]))
@@ -51,6 +53,12 @@ def openFileDialog(app):
         app.uploadB.h = 40
     except:
         pass
+
+def saveFileDialog(app):
+    filename = filedialog.asksaveasfile(mode='w', defaultextension=".jpg")
+    if not filename:
+        return
+    app.imgShow.save(filename)
 
 def scaleImg(app):
     app.imgOldW, app.imgOldH = app.imgArray.shape[1], app.imgArray.shape[0]

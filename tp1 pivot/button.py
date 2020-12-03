@@ -22,9 +22,9 @@ class button():
         self.color = self.dark
         self.textColor = self.light
         self.fields = fields
+        self.actions = []
         if self.fields != None:
             self.bMenu = menu(self.x + self.w, self.y, self.fields)
-            print("yessir")
     
     def changeColor(self, color):
         self.color = color
@@ -50,10 +50,11 @@ class button():
             if self.fields != None:
                 if self.bMenu.hover(x,y) and self.bMenu.show:
                     self.bMenu.show = True
-                    for b in self.bMenu.buttons:
+                    for b in self.bMenu.inputs:
                         b.hover(x,y)
+                    self.bMenu.doneButton.hover(x,y)
                 else:
-                    for b in self.bMenu.buttons:
+                    for b in self.bMenu.inputs:
                         b.changeColor(b.dark)
                     self.bMenu.show = False
                     self.changeColor(self.dark)
@@ -68,29 +69,20 @@ class button():
 
     def menuClick(self, x, y):
         if self.bMenu.show:
-            for b in self.bMenu.buttons:
+            for b in self.bMenu.inputs:
                 b.detectClick(x,y)
+            if self.bMenu.doneButton.click(x,y):
+                self.actions.append(self.text)
+                for field in self.bMenu.inputs:
+                    self.actions.append(field.text)
+                    field.text = "Click Here"
+                self.bMenu.show = False
+                
+                return self.actions
+        return []
     
-    def function(self, img):
-        if app.loaded:
-            print(self.text)
-            if self.num == 0:
-                return blur(img, 3, True, 1)
-            elif self.num == 1:
-                return edgeDetection(img, "laplacian")
-            elif self.num == 2:
-                return bilateral(img, 3, 20, 100)
-            elif self.num == 3:
-                pass
-            elif self.num == 4:
-                pass
-            elif self.num == 5:
-                pass
-            elif self.num == 6:
-                pass
-            elif self.num == 7:
-                pass
-            else:
-                pass
-
+    def menuInput(self, key):
+        if self.bMenu.show:
+            for b in self.bMenu.inputs:
+                b.takeInput(key)
 
