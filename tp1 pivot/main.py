@@ -5,6 +5,7 @@ from sharpen import *
 from interface import *
 from button import *
 from adjustments import *
+from crop import *
 from menu import *
 import os
 import cv2
@@ -16,6 +17,7 @@ def appStarted(app):
     initUI(app)
     app.timerDelay = 100
     app.actions = []
+    
 
 def mousePressed(app, event):
     mX, mY = event.x, event.y
@@ -28,13 +30,37 @@ def mousePressed(app, event):
             for b in app.buttons:
                 if app.actions == []:
                     app.actions = b.menuClick(mX, mY)
-                    print(app.actions)
+                    # print(app.actions)
                 # if b.click(mX, mY) and app.loaded:
                 #     app.imgArray = b.function(app.imgArray)
                 #     scaleImg(app)
+        if app.cropping:
+            app.point1 = mX, mY
+
+def mouseDragged(app, event):
+    mX, mY  = event.x, event.y
+    if app.cropping:
+       app.point2 = mX,  mY
+
+
+def mouseReleased(app, event):
+    mX, mY = event.x, event.y
+    if app.cropping and app.point1 != None and app.point2 != None:
+        app.point2 = mX,  mY
+        x1 = int((app.point1[0] - ((app.width/2) + 100) + app.imgNewW/2) / app.scale)
+        x2 = int((app.point2[0] - ((app.width/2) + 100) + app.imgNewW/2) / app.scale)
+        y1 = int((app.point1[1] - (app.height/2) + app.imgNewH/2) / app.scale)
+        y2 = int((app.point2[1] - (app.height/2) + app.imgNewH/2) / app.scale)
+        print(x1, x2, y1, y2)
+        app.imgArray = crop(app.imgArray, x1, y1, x2, y2)
+        app.scale = None
+        scaleImg(app)
+        app.cropping = False
+        app.actions = []
 
 def mouseMoved(app, event):
     mX, mY = event.x, event.y
+    # print(mX, mY)
     app.uploadB.hover(mX,mY)
     if app.started:
         app.saveB.hover(mX, mY)
@@ -44,12 +70,25 @@ def mouseMoved(app, event):
 def doAction(app):
     if app.actions != []:
         print("did the thing")
-        action = app.actions[0]
-        typ = app.actions[1].lower()
         try:
-            kernel = float(app.actions[2])
-            sigma = int(app.actions [3])
-            speed = app.actions[4].lower()
+            action = app.actions[0]
+            if action == "FILTER":
+                rawkernel = np.array(app.actions[1:])
+                kernel = []
+                for row in range(len(rawkernel)):
+                    temp = []
+                    for col in range(len(rawkernel)):
+                        if (rawkernel[row][col] != "-"
+                            and rawkernel[row][col].isdigit()):
+                            temp.append(int(rawkernel[row][col]))
+                    if temp != []:
+                        kernel.append(np.array(temp).astype(np.uint8))
+                kernel = np.array(kernel).astype(np.uint8)
+            else:
+                typ = app.actions[1].lower()
+                kernel = float(app.actions[2])
+                sigma = int(app.actions [3])
+                speed = app.actions[4].lower()
         except:
             pass
         if action == "BLUR":
@@ -102,8 +141,16 @@ def doAction(app):
                 app.imgArray = increaseContrast(app.imgArray)
             elif typ == "-":
                 app.imgArray = decreaseContrast(app.imgArray)
+        elif action == "CROP":
+            app.cropping = True
+            app.point1 = None
+            app.point2 = None
+        elif action == "FILTER":
+            app.imgArray = cv2.filter2D(app.imgArray, -1, kernel)
         scaleImg(app)
         app.actions = []
+
+
 
 def timerFired(app):
     if app.started:
@@ -128,10 +175,15 @@ def keyPressed(app, event):
         for b in app.buttons:
             b.menuInput(key)
 
+def drawCropBox(app, canvas):
+    if app.cropping and app.point1 != None and app.point2 != None:
+        canvas.create_rectangle(app.point1[0], app.point1[1], app.point2[0], app.point2[1], outline = app.torq, width = 3)
+
 def redrawAll(app, canvas):
     drawUIBase(app,canvas)
     drawImage(app, canvas)
     drawUI(app, canvas)
+    drawCropBox(app, canvas)
 
 runApp(width = 1380, height = 720)
 

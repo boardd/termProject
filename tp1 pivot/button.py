@@ -4,6 +4,7 @@ from noise import *
 from sharpen import *
 from interface import *
 from adjustmentMenu import *
+from kernelMenu import *
 from menu import *
 import os
 import cv2
@@ -30,8 +31,13 @@ class button():
         print(self.fields)
         self.actions = []
         if self.text in self.special:
-            self.type = 1
-            self.bMenu = menu(self.x + self.w, self.y, self.fields)
+            if self.text == "CROP":
+                self.type = 1
+                self.fields = None
+                self.bMenu = None
+            elif self.text == "FILTER":
+                self.type = 4
+                self.bMenu = kernelMenu(self.x + self.w, self.y) # add filter menu
         if self.text in self.regularMenus:
             self.type = 2
             self.bMenu = menu(self.x + self.w, self.y, self.fields)
@@ -68,18 +74,28 @@ class button():
                         for b in self.bMenu.inputs:
                             b.hover(x,y)
                         self.bMenu.doneButton.hover(x,y)
-                    if self.type == 3:
+                    elif self.type == 3:
                         self.bMenu.minusButton.hover(x,y)
                         self.bMenu.plusButton.hover(x,y)
+                    elif self.type == 4:
+                        for row in self.bMenu.inputs:
+                            for b in row:
+                                b.hover(x,y)
+                        self.bMenu.doneButton.hover(x,y)
                 else:
                     if self.type == 2:
                         for b in self.bMenu.inputs:
                             b.changeColor(b.dark)
-                    if self.type == 3:
+                    elif self.type == 3:
                         self.bMenu.minusButton.changeColor(self.bMenu.minusButton.dark)
                         self.bMenu.plusButton.changeColor(self.bMenu.plusButton.dark)
+                    elif self.type == 4:
+                        for row in self.bMenu.inputs:
+                            for b in row:
+                                b.changeColor(b.dark)
                     self.bMenu.show = False
                     self.changeColor(self.dark)
+
             else:
                 self.changeColor(self.dark)
         
@@ -91,7 +107,7 @@ class button():
 
     def menuClick(self, x, y):
         self.actions = []
-        if self.bMenu.show:
+        if self.bMenu != None and self.bMenu.show:
             if self.type == 2:
                 for b in self.bMenu.inputs:
                     b.detectClick(x,y)
@@ -102,7 +118,21 @@ class button():
                         field.text = "Click Here"
                     self.bMenu.show = False
                     return self.actions
-            if self.type == 3:
+            elif self.type == 4:
+                for row in self.bMenu.inputs:
+                    for b in row:
+                        b.detectClick(x,y)
+                if self.bMenu.doneButton.click(x,y):
+                    self.actions.append(self.text)
+                    for row in self.bMenu.inputs:
+                        temp = []
+                        for field in row:
+                            value = field.text[1:-1]
+                            temp.append(value)
+                        self.actions.append(temp)
+                    self.bMenu.show = False
+                    return self.actions
+            elif self.type == 3:
                 if self.bMenu.plusButton.click(x,y):
                     self.actions.append(self.text)
                     self.actions.append(self.bMenu.plusButton.text)
@@ -111,6 +141,11 @@ class button():
                     self.actions.append(self.text)
                     self.actions.append(self.bMenu.minusButton.text)
                     return self.actions
+        
+        if self.type == 1:
+            if self.click(x,y):
+                self.actions.append(self.text)
+                return self.actions
         return []
     
     def menuInput(self, key):
@@ -118,4 +153,8 @@ class button():
             if self.bMenu.show:
                 for b in self.bMenu.inputs:
                     b.takeInput(key)
-
+        if self.type == 4:
+            if self.bMenu.show:
+                for row in self.bMenu.inputs:
+                    for b in row:
+                        b.takeInput(key)

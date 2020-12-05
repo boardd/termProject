@@ -20,7 +20,9 @@ def initUI(app):
     app.medGrey = "#495057"
     app.litGrey = "#ADB5BD"
     app.veryLitGrey = "#CED4DA"
+    app.torq = "#40E0D0"
     app.buttons = []
+    app.cropping = False
     createButtons(app)
 
 def createButtons(app):
