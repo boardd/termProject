@@ -24,17 +24,14 @@ def initUI(app):
     createButtons(app)
 
 def createButtons(app):
+    print("ran")
     text = ["BLUR", "SHARPEN", "DENOISE", "CROP", "FILTER", "COLOR", "CONTRAST", "BRIGHTNESS"]
-    sampleDict = {"Type": ["Gaussian", "Median", "Average"], 
-                "Kernel": [None],
-                "Sigma": [None],
-                "Speed": ["Slow", "Fast"],
-                }
-    blurList = {"Type":[None], "Kernel":[None], "Sigma":[None], "Speed":[None]}
-    sharpenList = {"Type":[None], "Scale":[None]}
-    fields = [blurList] + [sharpenList] +  [sampleDict]* 6
+    sampleList = ["Type", "Kernel", "Sigma", "Speed"]
+    blurList = ["Type", "Kernel", "Sigma", "Speed"]
+    sharpenList = ["Type", "Scale"]
+    fields = [blurList] + [sharpenList] +  [sampleList]* 6
     x, y, w, h, gap = 20, 140, 80, 30, 50
-    for i in range(8):
+    for i in range(len(text)):
         app.buttons.append(button(x, y + (gap * i), w, h, text[i], i, fields[i]))
 
 def openFileDialog(app):

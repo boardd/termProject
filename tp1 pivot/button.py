@@ -3,6 +3,7 @@ from blurs import *
 from noise import *
 from sharpen import *
 from interface import *
+from adjustmentMenu import *
 from menu import *
 import os
 import cv2
@@ -17,15 +18,28 @@ class button():
         self.h = h
         self.text = text
         self.num = number
+        self.special = {"CROP", "FILTER"}
+        self.regularMenus = {"BLUR", "SHARPEN", "DENOISE"}
+        self.adjMenus = {"COLOR", "CONTRAST", "BRIGHTNESS"}
+        self.type = None
         self.dark = "#495057"
         self.light = "#CED4DA"
         self.color = self.dark
         self.textColor = self.light
         self.fields = fields
+        print(self.fields)
         self.actions = []
-        if self.fields != None:
+        if self.text in self.special:
+            self.type = 1
             self.bMenu = menu(self.x + self.w, self.y, self.fields)
-    
+        if self.text in self.regularMenus:
+            self.type = 2
+            self.bMenu = menu(self.x + self.w, self.y, self.fields)
+        elif self.text in self.adjMenus:
+            self.type = 3
+            self.bMenu = adjMenu(self.x + self.w, self.y)
+
+            
     def changeColor(self, color):
         self.color = color
         if color == self.light:
@@ -50,12 +64,20 @@ class button():
             if self.fields != None:
                 if self.bMenu.hover(x,y) and self.bMenu.show:
                     self.bMenu.show = True
-                    for b in self.bMenu.inputs:
-                        b.hover(x,y)
-                    self.bMenu.doneButton.hover(x,y)
+                    if self.type == 2:
+                        for b in self.bMenu.inputs:
+                            b.hover(x,y)
+                        self.bMenu.doneButton.hover(x,y)
+                    if self.type == 3:
+                        self.bMenu.minusButton.hover(x,y)
+                        self.bMenu.plusButton.hover(x,y)
                 else:
-                    for b in self.bMenu.inputs:
-                        b.changeColor(b.dark)
+                    if self.type == 2:
+                        for b in self.bMenu.inputs:
+                            b.changeColor(b.dark)
+                    if self.type == 3:
+                        self.bMenu.minusButton.changeColor(self.bMenu.minusButton.dark)
+                        self.bMenu.plusButton.changeColor(self.bMenu.plusButton.dark)
                     self.bMenu.show = False
                     self.changeColor(self.dark)
             else:
@@ -68,21 +90,32 @@ class button():
         return False
 
     def menuClick(self, x, y):
+        self.actions = []
         if self.bMenu.show:
-            for b in self.bMenu.inputs:
-                b.detectClick(x,y)
-            if self.bMenu.doneButton.click(x,y):
-                self.actions.append(self.text)
-                for field in self.bMenu.inputs:
-                    self.actions.append(field.text)
-                    field.text = "Click Here"
-                self.bMenu.show = False
-                
-                return self.actions
+            if self.type == 2:
+                for b in self.bMenu.inputs:
+                    b.detectClick(x,y)
+                if self.bMenu.doneButton.click(x,y):
+                    self.actions.append(self.text)
+                    for field in self.bMenu.inputs:
+                        self.actions.append(field.text)
+                        field.text = "Click Here"
+                    self.bMenu.show = False
+                    return self.actions
+            if self.type == 3:
+                if self.bMenu.plusButton.click(x,y):
+                    self.actions.append(self.text)
+                    self.actions.append(self.bMenu.plusButton.text)
+                    return self.actions
+                elif self.bMenu.minusButton.click(x,y):
+                    self.actions.append(self.text)
+                    self.actions.append(self.bMenu.minusButton.text)
+                    return self.actions
         return []
     
     def menuInput(self, key):
-        if self.bMenu.show:
-            for b in self.bMenu.inputs:
-                b.takeInput(key)
+        if self.type == 2:
+            if self.bMenu.show:
+                for b in self.bMenu.inputs:
+                    b.takeInput(key)
 

@@ -9,7 +9,7 @@ import math
 import numpy as np
 
 class menu:
-    def __init__(self, x, y, fields = dict()):
+    def __init__(self, x, y, fields = list()):
         self.x = x
         self.y = y
         self.w = 200

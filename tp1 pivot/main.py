@@ -4,11 +4,12 @@ from noise import *
 from sharpen import *
 from interface import *
 from button import *
+from adjustments import *
 from menu import *
 import os
 import cv2
 import math
-import numpy as np
+import numpy as nps
 
 def appStarted(app):
     app.started = False
@@ -42,6 +43,7 @@ def mouseMoved(app, event):
 
 def doAction(app):
     if app.actions != []:
+        print("did the thing")
         action = app.actions[0]
         typ = app.actions[1].lower()
         try:
@@ -77,14 +79,29 @@ def doAction(app):
             elif typ == "basic2":
                 app.imgArray = fastSharpen(app.imgArray, "basic2", kernel)
             elif typ == "double prime":
-                app.imageArray = fastSharpen(app.imgArray, "doublePrime", kernel)
+                app.imgArray = fastSharpen(app.imgArray, "doublePrime", kernel)
         elif action == "DENOISE":
             kernel = int(kernel)
             if typ == "bilateral":
                 if speed == "fast":
-                    app.imageArray = cv2.bilateralFilter(app.imgArray, kernel, sigma, sigma)
+                    app.imgArray = cv2.bilateralFilter(app.imgArray, kernel, sigma, sigma)
                 elif speed == "slow":
-                    app.imageArray = bilateral(app.imgArray, kernel, sigma, sigma)
+                    app.imgArray = bilateral(app.imgArray, kernel, sigma, sigma)
+        elif action == "COLOR":
+            if typ == "+":
+                app.imgArray = increaseSat(app.imgArray)
+            elif typ == "-":
+                app.imgArray = decreaseSat(app.imgArray)
+        elif action == "BRIGHTNESS":
+            if typ == "+":
+                app.imgArray = increaseBrightness(app.imgArray)
+            elif typ == "-":
+                app.imgArray = decreaseBrightness(app.imgArray)
+        elif action == "CONTRAST":
+            if typ == "+":
+                app.imgArray = increaseContrast(app.imgArray)
+            elif typ == "-":
+                app.imgArray = decreaseContrast(app.imgArray)
         scaleImg(app)
         app.actions = []
 
@@ -97,16 +114,16 @@ def timerFired(app):
 def keyPressed(app, event):
     key = event.key
     # skips the beginning screen
-    # if  key == "s":
-    #     app.loadedImg = Image.open("resources/alanhsu.jpg")
-    #     app.imgArray = np.array(app.loadedImg)
-    #     app.scale = None
-    #     scaleImg(app)
-    #     app.started = True
-    #     app.loaded = True
-    #     app.uploadB.x = 20
-    #     app.uploadB.y = 20
-    #     app.uploadB.h = 40
+    if  key == "s":
+        app.loadedImg = Image.open("resources/alanhsu.jpg")
+        app.imgArray = np.array(app.loadedImg)
+        app.scale = None
+        scaleImg(app)
+        app.started = True
+        app.loaded = True
+        app.uploadB.x = 20
+        app.uploadB.y = 20
+        app.uploadB.h = 40
     if app.loaded:
         for b in app.buttons:
             b.menuInput(key)
